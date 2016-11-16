@@ -1,0 +1,14 @@
+{
+	"name":              "cli-minesweeper",
+	"description":       "Play Minesweeper in the command line!",
+	"version":           "0.1.0",
+	"main":              "index.js",
+	"files":             ["index.js"],
+	"keywords":          ["command", "line", "cli", "minesweeper"],
+	"author":            "Jannis R <mail@jannisr.de>",
+	"homepage":          "https://github.com/derhuerst/cli-minesweeper",
+	"repository":        "derhuerst/cli-minesweeper",
+	"bugs":              "https://github.com/derhuerst/cli-minesweeper/issues",
+	"license":           "ISC",
+	"engines":           {"node": ">=6"}
+}
