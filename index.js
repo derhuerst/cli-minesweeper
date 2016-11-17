@@ -8,19 +8,18 @@ const wrap = require('prompt-skeleton')
 
 const arr = (l, f) => new Array(l).fill(null).map(f)
 
-const countAt = (mines, x, y) => {
-	const mX = mines.length - 1
-	const mY = mines[0].length - 1
+const countAt = (size, mines, x, y) => {
+	const s = size - 1
 	let c = 0
 
-	if (x > 0 && y > 0)   c += mines[x - 1][y - 1] // top left
-	if (y > 0)            c += mines[x    ][y - 1] // top center
-	if (x < mX && y > 0)  c += mines[x + 1][y - 1] // top right
-	if (x < mX)           c += mines[x + 1][y    ] // center right
-	if (x < mX && y < mY) c += mines[x + 1][y + 1] // bottom right
-	if (y < mY)           c += mines[x    ][y + 1] // bottom center
-	if (x > 0 && y < mY)  c += mines[x - 1][y + 1] // bottom left
-	if (x > 0)            c += mines[x - 1][y    ] // center left
+	if (x > 0 && y > 0) c += mines[x - 1][y - 1] // top left
+	if (y > 0)          c += mines[x    ][y - 1] // top center
+	if (x < s && y > 0) c += mines[x + 1][y - 1] // top right
+	if (x < s)          c += mines[x + 1][y    ] // center right
+	if (x < s && y < s) c += mines[x + 1][y + 1] // bottom right
+	if (y < s)          c += mines[x    ][y + 1] // bottom center
+	if (x > 0 && y < s) c += mines[x - 1][y + 1] // bottom left
+	if (x > 0)          c += mines[x - 1][y    ] // center left
 
 	return c
 }
@@ -162,20 +161,23 @@ const Minesweeper = {
 	}
 
 	, render: function (first) {
-		let out = '\n'
+		const isGameOver = this.aborted
+
+		// todo: re-render only necessary parts
+		let out = (isGameOver ? '😵 ' : '😬 ') + chalk.gray(` ${this.nrOfMines} mines\n`)
 		for (let y = 0; y < this.mines.length; y++) {
 			for (let x = 0; x < this.mines[0].length; x++) {
 
-				const isGameOver = this.aborted
 				const isFlagged = this.flagged[x][y]
 				const isOpened = this.opened[x][y]
 				const isMine = this.mines[x][y]
+				const isSelected = x === this.cursorX && y === this.cursorY
 				const count = this.counts[x][y]
 				let cell
 
 				if (isFlagged && !isGameOver) cell = '🚩'
 				else if (!isOpened)   cell = chalk.gray('?')
-				else if (isMine)      cell = '💥'
+				else if (isMine)      cell = isSelected ? '💥' : '💣'
 				else if (count === 1) cell = chalk.blue(count)
 				else if (count === 2) cell = chalk.green(count)
 				else if (count === 3) cell = chalk.yellow(count)
@@ -183,10 +185,8 @@ const Minesweeper = {
 				else if (count > 4)   cell = chalk.bold.red(count)
 				else                  cell = ' '
 
+				out += isSelected ? chalk.bgWhite.bold(cell) : cell
 				out += ' '
-				out += x === this.cursorX && y === this.cursorY
-					? chalk.bgWhite.bold(cell)
-					: cell
 			}
 			out += '\n'
 		}
@@ -217,14 +217,14 @@ const minesweeper = (opt) => {
 	const counts = arr(opt.size, () => arr(opt.size, () => 0))
 	for (let y = 0; y < mines.length; y++) {
 		for (let x = 0; x < mines[0].length; x++) {
-			counts[x][y] = countAt(mines, x, y)
+			counts[x][y] = countAt(opt.size, mines, x, y)
 		}
 	}
 
 	let m = Object.assign(Object.create(Minesweeper), {
 		value: null, done: false, aborted: false,
 		nrOfMines, mines, flaggedMines: 0, flagged,
-		opened, counts, cursorX: 0, cursorY: 0
+		opened, counts, cursorX: 0, cursorY: 0, size: opt.size
 	})
 
 	return wrap(m)
