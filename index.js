@@ -61,6 +61,7 @@ const Minesweeper = {
 		while (item = queue.pop()) {
 			let [x, y, dir] = item
 			this.opened[x][y] = true
+			this.flagged[x][y] = false
 			if (this.counts[x][y] === 0) {
 				add(x, y-1, 'up')
 				add(x+1, y, 'right')
@@ -68,6 +69,16 @@ const Minesweeper = {
 				add(x-1, y, 'left')
 			}
 		}
+	}
+
+	, flag: function () {
+		const x = this.cursorX
+		const y = this.cursorY
+		const isFlagged = !this.flagged[x][y]
+		this.flagged[x][y] = isFlagged
+		if (this.mines[x][y]) this.flaggedMines += isFlagged ? 1 : -1
+		console.error('flaggedMines', this.flaggedMines, 'nrOfMines', this.nrOfMines)
+		if (this.flaggedMines >= this.nrOfMines) return this.submit()
 	}
 
 
@@ -96,15 +107,6 @@ const Minesweeper = {
 
 
 
-	// , first: function () {
-	// 	this.moveCursor(0, this.cursorY)
-	// 	this.render()
-	// }
-	// , last: function () {
-	// 	this.moveCursor(this.mines[0].length - 1, this.cursorY)
-	// 	this.render()
-	// }
-
 	, up: function () {
 		if (this.cursorY === 0) return this.bell()
 		this.moveCursor(this.cursorX, this.cursorY - 1)
@@ -127,9 +129,13 @@ const Minesweeper = {
 	}
 
 	, _: function (c) { // on space key
-		if (c !== ' ') return this.bell()
-		this.open()
-		this.render()
+		if (c === ' ') {
+			this.open()
+			this.render()
+		} else if (c === 'f') {
+			this.flag()
+			this.render()
+		} else this.bell()
 	}
 
 
@@ -156,19 +162,19 @@ const Minesweeper = {
 	}
 
 	, render: function (first) {
-		if (first) this.out.write(esc.cursorHide)
-		else this.out.write(esc.eraseLines(this.mines.length + 2))
-
 		let out = '\n'
 		for (let y = 0; y < this.mines.length; y++) {
 			for (let x = 0; x < this.mines[0].length; x++) {
 
+				const isGameOver = this.aborted
+				const isFlagged = this.flagged[x][y]
 				const isOpened = this.opened[x][y]
 				const isMine = this.mines[x][y]
 				const count = this.counts[x][y]
 				let cell
 
-				     if (!isOpened)   cell = chalk.gray('?')
+				if (isFlagged && !isGameOver) cell = '🚩'
+				else if (!isOpened)   cell = chalk.gray('?')
 				else if (isMine)      cell = '💥'
 				else if (count === 1) cell = chalk.blue(count)
 				else if (count === 2) cell = chalk.green(count)
@@ -185,7 +191,8 @@ const Minesweeper = {
 			out += '\n'
 		}
 
-		process.stdout.write(out)
+		if (first) this.out.write(esc.cursorHide + out)
+		else this.out.write(esc.eraseLines(this.mines.length + 2) + out)
 	}
 }
 
@@ -198,8 +205,14 @@ const defaults = {
 const minesweeper = (opt) => {
 	if (Array.isArray(opt) || 'object' !== typeof opt) opt = {}
 
-	const mines = arr(opt.size, () => arr(opt.size, () => Math.random() <= .15))
+	let nrOfMines = 0
+	const mines = arr(opt.size, () => arr(opt.size, () => {
+		const isMine = Math.random() <= .15
+		if (isMine) nrOfMines++
+		return isMine
+	}))
 	const opened = arr(opt.size, () => arr(opt.size, () => false))
+	const flagged = arr(opt.size, () => arr(opt.size, () => false))
 
 	const counts = arr(opt.size, () => arr(opt.size, () => 0))
 	for (let y = 0; y < mines.length; y++) {
@@ -210,7 +223,8 @@ const minesweeper = (opt) => {
 
 	let m = Object.assign(Object.create(Minesweeper), {
 		value: null, done: false, aborted: false,
-		mines, opened, counts, cursorX: 0, cursorY: 0
+		nrOfMines, mines, flaggedMines: 0, flagged,
+		opened, counts, cursorX: 0, cursorY: 0
 	})
 
 	return wrap(m)
