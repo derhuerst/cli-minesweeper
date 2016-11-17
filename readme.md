@@ -2,7 +2,7 @@
 
 **Play Minesweeper in the command line!**
 
-todo: asciicast
+[![asciicast](https://asciinema.org/a/93190.png)](https://asciinema.org/a/93190)
 
 [![npm version](https://img.shields.io/npm/v/cli-minesweeper.svg)](https://www.npmjs.com/package/cli-minesweeper)
 [![dependency status](https://img.shields.io/david/derhuerst/cli-minesweeper.svg)](https://david-dm.org/derhuerst/cli-minesweeper#info=dependencies)
@@ -12,13 +12,17 @@ todo: asciicast
 ## Installing
 
 ```
-npm install cli-minesweeper
+npm install -g cli-minesweeper
 ```
-
-todo: executable
 
 
 ## Usage
+
+```shell
+minesweeper [--size n]
+```
+
+You can also use JS.
 
 ```js
 const minesweeper = require('cli-minesweeper')

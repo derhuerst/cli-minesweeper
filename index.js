@@ -76,7 +76,6 @@ const Minesweeper = {
 		const isFlagged = !this.flagged[x][y]
 		this.flagged[x][y] = isFlagged
 		if (this.mines[x][y]) this.flaggedMines += isFlagged ? 1 : -1
-		console.error('flaggedMines', this.flaggedMines, 'nrOfMines', this.nrOfMines)
 		if (this.flaggedMines >= this.nrOfMines) return this.submit()
 	}
 
