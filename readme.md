@@ -7,6 +7,7 @@
 [![npm version](https://img.shields.io/npm/v/cli-minesweeper.svg)](https://www.npmjs.com/package/cli-minesweeper)
 [![dependency status](https://img.shields.io/david/derhuerst/cli-minesweeper.svg)](https://david-dm.org/derhuerst/cli-minesweeper#info=dependencies)
 ![ISC-licensed](https://img.shields.io/github/license/derhuerst/cli-minesweeper.svg)
+[![chat on gitter](https://badges.gitter.im/derhuerst.svg)](https://gitter.im/derhuerst)
 
 
 ## Installing
