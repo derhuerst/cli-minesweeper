@@ -41,31 +41,31 @@ const Minesweeper = {
 
 		if (this.opened[x][y]) return this.bell()
 		if (this.mines[x][y]) return this.abort()
-		this.opened[x][y] = true
 
-		const queue = []
-		const add = (x, y, dir) => {
+		const queue = [[x, y]]
+		const add = (x, y) => {
 			if (x < 0 || x >= this.mines.length
 				|| y < 0 || y >= this.mines[0].length
 				|| this.mines[x][y] || this.opened[x][y]) return
-			queue.push([x, y, dir])
+			queue.push([x, y])
 		}
-
-		add(x, y-1, 'up')
-		add(x+1, y, 'right')
-		add(x, y+1, 'down')
-		add(x-1, y, 'left')
 
 		let item
 		while (item = queue.pop()) {
-			let [x, y, dir] = item
-			this.opened[x][y] = true
-			this.flagged[x][y] = false
-			if (this.counts[x][y] === 0) {
-				add(x, y-1, 'up')
-				add(x+1, y, 'right')
-				add(x, y+1, 'down')
-				add(x-1, y, 'left')
+			let [x, y] = item
+			if (!this.opened[x][y]) {
+				this.opened[x][y] = true
+				this.flagged[x][y] = false
+				if (this.counts[x][y] === 0) {
+					add(x-1, y-1)
+					add(x  , y-1)
+					add(x+1, y-1)
+					add(x+1, y  )
+					add(x+1, y+1)
+					add(x  , y+1)
+					add(x-1, y+1)
+					add(x-1, y  )
+				}
 			}
 		}
 	}
