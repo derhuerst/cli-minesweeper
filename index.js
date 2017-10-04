@@ -75,8 +75,12 @@ const Minesweeper = {
 		const y = this.cursorY
 		const isFlagged = !this.flagged[x][y]
 		this.flagged[x][y] = isFlagged
-		if (this.mines[x][y]) this.flaggedMines += isFlagged ? 1 : -1
-		if (this.flaggedMines >= this.nrOfMines) return this.submit()
+		if (this.mines[x][y]) {
+			this.flaggedMines += isFlagged ? 1 : -1
+		} else {
+			this.flaggedTiles += isFlagged ? 1 : -1
+		}
+		if (this.flaggedMines >= this.nrOfMines && this.flaggedTiles <= 0) return this.submit()
 	}
 
 
@@ -222,7 +226,7 @@ const minesweeper = (opt) => {
 
 	let m = Object.assign(Object.create(Minesweeper), {
 		value: null, done: false, aborted: false,
-		nrOfMines, mines, flaggedMines: 0, flagged,
+		nrOfMines, mines, flaggedMines: 0, flaggedTiles: 0, flagged,
 		opened, counts, cursorX: 0, cursorY: 0, size: opt.size
 	})
 
