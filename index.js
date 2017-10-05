@@ -54,6 +54,7 @@ const Minesweeper = {
 		while (item = queue.pop()) {
 			let [x, y] = item
 			if (!this.opened[x][y]) {
+				this.unopened--;
 				this.opened[x][y] = true
 				this.flagged[x][y] = false
 				if (this.counts[x][y] === 0) {
@@ -68,26 +69,25 @@ const Minesweeper = {
 				}
 			}
 		}
+
+		if (this.unopened <= 0) {
+			this.submit()
+		}
 	}
 
 	, flag: function () {
 		const x = this.cursorX
 		const y = this.cursorY
-		const isFlagged = !this.flagged[x][y]
-		this.flagged[x][y] = isFlagged
-		if (this.mines[x][y]) this.flaggedMines += isFlagged ? 1 : -1
-		if (this.flaggedMines >= this.nrOfMines) return this.submit()
+		if (!this.opened[x][y]) {
+			this.flagged[x][y] = !this.flagged[x][y]
+		}
 	}
 
 
 
 	, abort: function () {
-		this.done = this.aborted = true
-		for (let y = 0; y < this.mines.length; y++) {
-			for (let x = 0; x < this.mines[0].length; x++) {
-				this.opened[x][y] = true
-			}
-		}
+		this.done = true
+		this.aborted = true
 		this.emit()
 		this.render()
 		this.out.write('\n')
@@ -161,6 +161,7 @@ const Minesweeper = {
 
 	, render: function (first) {
 		const isGameOver = this.aborted
+		const isWon = this.done && !this.aborted
 
 		// todo: re-render only necessary parts
 		let out = (isGameOver ? '😵 ' : '😬 ') + chalk.gray(` ${this.nrOfMines} mines\n`)
@@ -174,17 +175,18 @@ const Minesweeper = {
 				const count = this.counts[x][y]
 				let cell
 
-				if (isFlagged && !isGameOver) cell = '🚩'
-				else if (!isOpened)   cell = chalk.gray('?')
-				else if (isMine)      cell = isSelected ? '💥' : '💣'
-				else if (count === 1) cell = chalk.blue(count)
-				else if (count === 2) cell = chalk.green(count)
-				else if (count === 3) cell = chalk.yellow(count)
-				else if (count === 4) cell = chalk.red(count)
-				else if (count > 4)   cell = chalk.bold.red(count)
-				else                  cell = ' '
+				if (isFlagged && !isGameOver)      cell = '🚩'
+				else if (isMine && isWon)          cell = '🚩'
+				else if (!isGameOver && !isOpened) cell = chalk.gray('?')
+				else if (isMine)                   cell = isSelected ? '💥' : '💣'
+				else if (count === 1)              cell = chalk.blue(count)
+				else if (count === 2)              cell = chalk.green(count)
+				else if (count === 3)              cell = chalk.yellow(count)
+				else if (count === 4)              cell = chalk.red(count)
+				else if (count > 4)                cell = chalk.bold.red(count)
+				else                               cell = ' '
 
-				out += isSelected ? chalk.bgWhite.bold(cell) : cell
+				out += isSelected && !isWon ? chalk.bgWhite.bold(cell) : cell
 				out += ' '
 			}
 			out += '\n'
@@ -205,9 +207,11 @@ const minesweeper = (opt) => {
 	if (Array.isArray(opt) || 'object' !== typeof opt) opt = {}
 
 	let nrOfMines = 0
+	let unopened = 0
 	const mines = arr(opt.size, () => arr(opt.size, () => {
 		const isMine = Math.random() <= .15
 		if (isMine) nrOfMines++
+		else unopened++
 		return isMine
 	}))
 	const opened = arr(opt.size, () => arr(opt.size, () => false))
@@ -222,7 +226,7 @@ const minesweeper = (opt) => {
 
 	let m = Object.assign(Object.create(Minesweeper), {
 		value: null, done: false, aborted: false,
-		nrOfMines, mines, flaggedMines: 0, flagged,
+		nrOfMines, mines, unopened, flagged,
 		opened, counts, cursorX: 0, cursorY: 0, size: opt.size
 	})
 
