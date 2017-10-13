@@ -164,7 +164,8 @@ const Minesweeper = {
 		const isWon = this.done && !this.aborted
 
 		// todo: re-render only necessary parts
-		let out = (isGameOver ? '😵 ' : '😬 ') + chalk.gray(` ${this.nrOfMines} mines\n`)
+		const emote = isGameOver ? '😵' : isWon ? '😎' : '😬';
+		let out = emote + ' ' + chalk.gray(` ${this.nrOfMines} mines\n`)
 		for (let y = 0; y < this.mines.length; y++) {
 			for (let x = 0; x < this.mines[0].length; x++) {
 
