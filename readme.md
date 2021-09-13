@@ -5,9 +5,10 @@
 [![asciicast](https://asciinema.org/a/93190.png)](https://asciinema.org/a/93190)
 
 [![npm version](https://img.shields.io/npm/v/cli-minesweeper.svg)](https://www.npmjs.com/package/cli-minesweeper)
-[![dependency status](https://img.shields.io/david/derhuerst/cli-minesweeper.svg)](https://david-dm.org/derhuerst/cli-minesweeper#info=dependencies)
 ![ISC-licensed](https://img.shields.io/github/license/derhuerst/cli-minesweeper.svg)
-[![chat on gitter](https://badges.gitter.im/derhuerst.svg)](https://gitter.im/derhuerst)
+![minimum Node.js version](https://img.shields.io/node/v/cli-minesweeper.svg)
+[![support me via GitHub Sponsors](https://img.shields.io/badge/support%20me-donate-fa7664.svg)](https://github.com/sponsors/derhuerst)
+[![chat with me on Twitter](https://img.shields.io/badge/chat%20with%20me-on%20Twitter-1da1f2.svg)](https://twitter.com/derhuerst)
 
 
 ## Installing
