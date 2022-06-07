@@ -1,8 +1,9 @@
 {
 	"name": "cli-minesweeper",
 	"description": "Play Minesweeper in the command line!",
-	"version": "0.1.1",
+	"version": "1.0.0",
 	"main": "index.js",
+	"preferGlobal": true,
 	"bin": {
 		"minesweeper": "./bin.js"
 	},
