@@ -22,12 +22,11 @@
 	"bugs": "https://github.com/derhuerst/cli-minesweeper/issues",
 	"license": "ISC",
 	"engines": {
-		"node": ">=6"
+		"node": ">=16"
 	},
 	"dependencies": {
-		"ansi-escapes": "^1.4",
-		"chalk": "^1.1.3",
-		"prompt-skeleton": "^0.1.1",
-		"yargs": "^6.4"
+		"chalk": "^4.1.2",
+		"prompt-skeleton": "^1.0.2",
+		"yargs": "^17.1.1"
 	}
 }

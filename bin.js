@@ -23,4 +23,6 @@ Examples:
 const size = +argv.size || 20
 
 game({size})
-.on('abort', () => process.exit(1))
+.catch(() => {
+	process.exit(1)
+})

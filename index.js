@@ -1,6 +1,5 @@
 'use strict'
 
-const esc = require('ansi-escapes')
 const chalk = require('chalk')
 const wrap = require('prompt-skeleton')
 
@@ -90,7 +89,6 @@ const Minesweeper = {
 	, abort: function () {
 		this.done = true
 		this.aborted = true
-		this.emit()
 		this.render()
 		this.out.write('\n')
 		this.close()
@@ -99,7 +97,6 @@ const Minesweeper = {
 	, submit: function () {
 		this.done = true
 		this.aborted = false
-		this.emit()
 		this.render()
 		this.out.write('\n')
 		this.close()
@@ -161,7 +158,7 @@ const Minesweeper = {
 		return out
 	}
 
-	, render: function (first) {
+	, render: function () {
 		const isGameOver = this.aborted
 		const isWon = this.done && !this.aborted
 
@@ -195,8 +192,7 @@ const Minesweeper = {
 			out += '\n'
 		}
 
-		if (first) this.out.write(esc.cursorHide + out)
-		else this.out.write(esc.eraseLines(this.mines.length + 2) + out)
+		this.out.write(out)
 	}
 }
 
