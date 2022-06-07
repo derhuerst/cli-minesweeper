@@ -79,7 +79,9 @@ const Minesweeper = {
 		const x = this.cursorX
 		const y = this.cursorY
 		if (!this.opened[x][y]) {
-			this.flagged[x][y] = !this.flagged[x][y]
+			const isFlagged = !this.flagged[x][y]
+			this.flagged[x][y] = isFlagged
+			if (this.mines[x][y]) this.flaggedMines += isFlagged ? 1 : -1
 		}
 	}
 
